@@ -27,4 +27,14 @@ class CommonController extends Controller
         }
         return $version;
     }
+    //返回json数据
+    public function success($data=[],$status="200",$msg='success'){
+        $success =  [
+            'status'=>$status,
+            'msg'=>$msg,
+            'data'=>$data
+        ];
+        return json_encode($success);
+    }
+
 }

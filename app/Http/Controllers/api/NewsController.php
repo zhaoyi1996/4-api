@@ -20,13 +20,12 @@ class NewsController extends CommonController
         $page_key='index_list'.$page;
         $page_key.='_'.$this->getCacheVersion('news');
         //查询缓存中是否存在数据
-        if($id_list=Redis::get($page_key)){
-            var_dump('Redis');
+        $id_list=Redis::get($page_key);
+        if(!empty($id_list)){
             $id_arr=unserialize($id_list);
             $list=$this->getListCache($id_arr);
             return $this->success($list);
         }
-
         //设置查询的条件
         $where=[
             ['status','=',3]
@@ -34,7 +33,7 @@ class NewsController extends CommonController
         //设置排序状态
         $order_field='publish_time';
         $order_type='desc';
-        $new_list_obj=NewsModel::with('getCate')->where($where)
+        $new_list_obj=NewsModel::leftJoin('news_cate','news_news.cate_id','=','news_cate.cate_id')->where($where)
             ->orderBy($order_field,$order_type)
             ->paginate($pageSize);
         if(!empty($new_list_obj)){
@@ -48,7 +47,7 @@ class NewsController extends CommonController
             $this->buildNewsDetailCache($news_list['data']);
         }
         //把查询出来的数据生成缓存，写入redis
-        $this->buildNewsDetailCache($page_key,$news_list['data']);
+        $this->buildNewsListCache($page_key,$news_list['data']);
         return $this->success($news_list['data']);
     }
 
@@ -66,9 +65,7 @@ class NewsController extends CommonController
      */
     public function buildNewsDetailCache( $news_list )
     {
-        dd($news_list);
         foreach( $news_list as $k=>$v ){
-            $v['cate_name']=$v['get_cate']['cate_name'];
             $detail_key='news_detail_'.$v['news_id'];
             Redis::hMset($detail_key,$v);
             Redis::expire($detail_key, 60*5);
@@ -81,8 +78,8 @@ class NewsController extends CommonController
             $detail_key='news_detail_'.$v;
             $detail=Redis::hGetAll($detail_key);
             if(empty($detail)){
-                $detail_obj=NewsModel::with('getCate')->find($v);
-                $detail->cate_name=$detail ->getCatre ->cate_name;
+                $detail_obj=NewsModel::leftJoin('news_cate','news_news.cate_id','=','news_cate.cate_id')->find($v);
+                $detail->cate_name=$detail_obj ->getCate ->cate_name;
                 $detail=collect($detail_obj)->toArray();
                 Redis::hMset($detail_key,$detail);
                 $all[]=$detail;
