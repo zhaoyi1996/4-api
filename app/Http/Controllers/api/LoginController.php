@@ -14,21 +14,62 @@ class LoginController extends Controller
     //执行登录
     public function login(Request $request)
     {
+        ini_set("display_errors","On");
+        error_reporting(E_ALL);
         $phone=$this->checkParamIsEmpty('phone');
         $password=$this->checkParamIsEmpty('password');
+        $password=md5($password);
 //        dump($password);
 //        dump($phone);die;
         $res=User::where('phone',$phone)->first();
+        $time=time();
+        //根据手机号码查询
         if($res){
-            if($res['password']!=$password){
+            //判断该用户状态是否可以登录
+            if($res['err_num']>=5 && $time - $res['err_time'] < 3600){
+                $err_info=date('H:i:s',$res -> err_time + 3600);
+                //dd($err_info);
                 $err=[
                     'status'=>100,
-                    'msg'=>"账号密码错误",
+                    'msg'=>"账号已被锁定,请与".$err_info."时分以后登录",
                 ];
                 return $err;
+            }
+
+
+
+            if($res['password']!=$password){
+                echo 111;
+                //判断该用户上一次错误时间距离现在时间是否超过1小时  超过一小时则更新错误时间 未超过则添加错误次数
+                if(($time-$res['err_time'])>3600){
+                    $err_info=[
+                        'err_time'=>$time,
+                        'err_num'=>1
+                    ];
+                    $res=User::where('uid',$res['uid'])->update($err_info);
+                    $err=[
+                        'status'=>100,
+                        'msg'=>"账号密码错误,还剩余4次输入密码机会,超过5次锁定60分钟",
+                    ];
+                    return $err;
+                }else{
+                    $err_info=[
+                      'err_time'=>$time,
+                      'err_num'=>$res['err_num']+1
+                    ];
+                    $res=User::where('uid',$res['uid'])->update($err_info);
+                    $now=5-$err_info['err_num'];
+                    $err=[
+                        'status'=>100,
+                        'msg'=>"账号密码错误,还剩余".$now."次输入密码机会,超过5次锁定60分钟",
+                    ];
+                    return $err;
+
+                }
+
             }else{
                 //密码正确 返回200状态码,将用户id和token存入session
-                $token=md5(time());
+                $token=md5($time);
                 $success=[
                     'status'=>200,
                     'msg'=>"登陆成功",
@@ -45,6 +86,7 @@ class LoginController extends Controller
                 session(['userInfo'=>$userInfo]);
                 return $success;
             }
+        //未查询到给出提示
         }else{
             $err=[
                 'status'=>100,
