@@ -89,4 +89,14 @@ class NewsController extends CommonController
         }
         return $all;
     }
+
+    //新闻详情页面收藏
+    public function  news_details(){
+        $arr=[
+            'news_id'=>2,
+            'news_title'=>"统一阿萨姆 原味奶茶",
+            'news_info'=>"精选喜马拉雅山红茶，奶茶饮料，净含量：500毫升"
+        ];
+        return $arr;
+    }
 }
