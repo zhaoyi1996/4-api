@@ -31,3 +31,5 @@ Route::any('/testa','api\LoginController@test');
 
 Route::any('/lunbo','api\LunBoController@lunbo');
 
+Route::any('/details','api\DetailController@detail');
+
