@@ -12,9 +12,7 @@
 */
 
 
-//Route::any('/', function () {
-//    return view('welcome');
-//});
+
 //发送验证码
 Route::any('/vicode','api\LoginController@vicode');
 
@@ -27,9 +25,11 @@ Route::any('/test','api\LoginController@test');
 //    return view('welcome');
 //});
 
-Route::any('/' , 'IndexController@index' );
+Route::any('/' , 'api\NewsController@index' );
 
 Route::any('/testa','api\LoginController@test');
 
 Route::any('/lunbo','api\LunBoController@lunbo');
+
+Route::any('/details','api\DetailController@detail');
 

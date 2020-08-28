@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Exceptions\ApiExceptions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\aliyun_sms\api_demo\SmsDemo;
@@ -21,11 +22,7 @@ class LoginController extends Controller
         $res=User::where('phone',$phone)->first();
         if($res){
             if($res['password']!=$password){
-                $err=[
-                    'status'=>100,
-                    'msg'=>"账号密码错误",
-                ];
-                return $err;
+                throw new ApiExceptions('账号密码错误');
             }else{
                 //密码正确 返回200状态码,将用户id和token存入session
                 $token=md5(time());
@@ -46,11 +43,7 @@ class LoginController extends Controller
                 return $success;
             }
         }else{
-            $err=[
-                'status'=>100,
-                'msg'=>"账号密码错误",
-            ];
-            return $err;
+            throw new ApiExceptions('账号密码错误');
         }
     }
     protected function checkParamIsEmpty( $key )

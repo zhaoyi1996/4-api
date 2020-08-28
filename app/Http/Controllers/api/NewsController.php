@@ -89,4 +89,8 @@ class NewsController extends CommonController
         }
         return $all;
     }
+
+
+
+
 }
