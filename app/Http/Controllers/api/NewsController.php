@@ -90,7 +90,6 @@ class NewsController extends CommonController
         return $all;
     }
 
-<<<<<<< HEAD
     //新闻详情页面收藏
     public function  news_details(){
         $arr=[
@@ -100,9 +99,8 @@ class NewsController extends CommonController
         ];
         return $arr;
     }
-=======
 
 
 
->>>>>>> ba6276e94024f683fae7ab12a4853988cc5785ca
+
 }

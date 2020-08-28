@@ -31,9 +31,6 @@ Route::any('/testa','api\LoginController@test');
 
 Route::any('/lunbo','api\LunBoController@lunbo');
 
-<<<<<<< HEAD
 Route::any('/news_details' , 'api\NewsController@news_details' );
-=======
 Route::any('/details','api\DetailController@detail');
 
->>>>>>> ba6276e94024f683fae7ab12a4853988cc5785ca
