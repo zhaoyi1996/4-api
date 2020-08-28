@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Exceptions\ApiExceptions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\aliyun_sms\api_demo\SmsDemo;
@@ -24,6 +25,8 @@ class LoginController extends Controller
         $time=time();
         //根据手机号码查询
         if($res){
+            if($res['password']!=$password){
+                throw new ApiExceptions('账号密码错误');
             //判断该用户状态是否可以登录
             if($res['err_num']>=5 && $time - $res['err_time'] < 3600){
                 $err_info=date('H:i:s',$res -> err_time + 3600);
@@ -65,7 +68,6 @@ class LoginController extends Controller
                     return $err;
 
                 }
-
             }else{
                 //密码正确 返回200状态码,将用户id和token存入session
                 $token=md5($time);
@@ -92,11 +94,7 @@ class LoginController extends Controller
             }
         //未查询到给出提示
         }else{
-            $err=[
-                'status'=>100,
-                'msg'=>"账号密码错误",
-            ];
-            return $err;
+            throw new ApiExceptions('账号密码错误');
         }
     }
     protected function checkParamIsEmpty( $key )
