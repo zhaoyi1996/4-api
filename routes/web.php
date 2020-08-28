@@ -14,3 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+//注册模块(接口)
+Route::prefix('reg')->group(function(){
+    //图片验证码
+    Route::any('imageCode','Api\RegisterController@imageCode');
+    //获取图片验证码路径
+    Route::any('getImgCodeUrl','Api\RegisterController@getImgCodeUrl');
+});
