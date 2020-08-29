@@ -10,6 +10,17 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', function () {
+    return view('welcome');
+});
+
+//注册模块(接口)
+Route::prefix('reg')->group(function(){
+    //图片验证码
+    Route::any('imageCode','Api\RegisterController@imageCode');
+    //获取图片验证码路径
+    Route::any('getImgCodeUrl','Api\RegisterController@getImgCodeUrl');
+});
 
 
 
@@ -35,5 +46,4 @@ Route::any('/details','api\DetailController@detail');//新闻详情
 Route::any('/heat','api\NewsController@heat');//首页热点资讯
 Route::any('/news_details' , 'api\NewsController@news_details' );
 Route::any('/details','api\DetailController@detail');
-
 
