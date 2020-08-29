@@ -36,6 +36,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+
         parent::report($exception);
     }
 
@@ -50,6 +51,16 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof ApiExceptions){
+            $msg=$exception->getMessage();
+            $code=$exception->getCode();
+            $arr=[
+                'msg'    =>   $msg,
+                'code'  =>  $code,
+                'data'  =>  []
+            ];
+            echo json_encode($arr,JSON_UNESCAPED_UNICODE);die;
+        }
         return parent::render($request, $exception);
     }
 }
