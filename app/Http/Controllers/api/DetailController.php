@@ -19,6 +19,7 @@ class DetailController extends CommonController
         ];
         $news_list=NewsModel::where($where)->leftJoin('news_cate','news_news.cate_id','=','news_cate.cate_id')->first();
         $news_list=collect($news_list)->toArray();
+
         return $this->success($news_list);
     }
 }
