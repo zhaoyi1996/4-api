@@ -15,8 +15,7 @@ class LoginController extends Controller
     //执行登录
     public function login(Request $request)
     {
-        ini_set("display_errors","On");
-        error_reporting(E_ALL);
+
         $phone=$this->checkParamIsEmpty('phone');
         $password=$this->checkParamIsEmpty('password');
         $password=md5($password);
@@ -42,7 +41,7 @@ class LoginController extends Controller
 
 
             if($res['password']!=$password){
-                echo 111;
+                
                 //判断该用户上一次错误时间距离现在时间是否超过1小时  超过一小时则更新错误时间 未超过则添加错误次数
                 if(($time-$res['err_time'])>3600){
                     $err_info=[
@@ -78,8 +77,13 @@ class LoginController extends Controller
                     "uid"=>$res['uid'],
                     "token"=>$token
                 ];
-                //更新用户token
-                $upd_token=User::where('uid',$res['uid'])->update(['token'=>$token]);
+                //错误时间和错误次数改为null,更新用户token
+                $err_info=[
+                  'err_num'=>0,
+                  'err_time'=>null,
+                  'token'=>$token
+                ];
+                $upd_token=User::where('uid',$res['uid'])->update($err_info);
                 //将用户ID和TOKEN存入session
                 $userInfo=[
                     "uid"=>$res['uid'],
