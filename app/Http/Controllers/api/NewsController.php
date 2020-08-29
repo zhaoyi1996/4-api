@@ -91,6 +91,21 @@ class NewsController extends CommonController
     }
 
 
-
+    /**
+     * 首页-热点资讯
+     */
+    public function heat(){
+        //获取热点资讯
+        $where=[
+            ['status','=',3]
+        ];
+        $heat=NewsModel::where($where)->orderBy('click_count','desc')->limit(10)->get();
+        foreach($heat as $k=>$v){
+            for($i=0;$i<=$k+1;$i++)
+            $v['sort']=$i;
+        }
+        $heat=collect($heat)->toArray();
+        return $this->success($heat);
+    }
 
 }
